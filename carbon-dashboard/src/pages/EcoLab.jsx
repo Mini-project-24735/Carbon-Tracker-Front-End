@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Leaf, Image as ImageIcon, Sparkles, Search } from 'lucide-react';
+import { Image as ImageIcon, Leaf, Search, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 
 const EcoLab = () => {
   // Added darkMode and limitAI to the state
@@ -28,7 +28,6 @@ const EcoLab = () => {
 
   const handleToggle = (key) => setToggles((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  // Clean labels for the control panel
   const toggleLabels = {
     limitAI: 'Limit AI Usage',
     stopAutoplay: 'Stop Autoplay',
@@ -45,7 +44,7 @@ const EcoLab = () => {
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* LEFT COLUMN: The Visual Sandbox */}
-        <div className={`border-2 border-dashed border-gray-300 rounded-xl p-4 transition-all bg-white ${toggles.grayscale ? 'grayscale' : ''}`}>
+        <div className={`border-2 border-dashed border-green-500 rounded-xl p-4 transition-all bg-gradient-to-br from-green-500 to-emerald-800 ${toggles.grayscale ? 'grayscale' : ''}`}>
           
           {/* Inner Sandbox Container - Responds to Dark Mode */}
           <div className={`rounded-lg p-6 h-[420px] transition-colors duration-300 ${toggles.darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
@@ -56,7 +55,7 @@ const EcoLab = () => {
               {toggles.limitAI ? (
                 <><Search size={18} /> <span>Standard Web Search</span></>
               ) : (
-                <><Sparkles size={18} /> <span className="font-bold">✨ Generating AI Video...</span></>
+                <><Sparkles size={18} /> <span className="font-bold"> Generating AI Video...</span></>
               )}
             </div>
 
@@ -73,12 +72,12 @@ const EcoLab = () => {
         </div>
 
         {/* RIGHT COLUMN: The Control Panel */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-gradient-to-br from-green-500 to-emerald-800 rounded-xl shadow-sm border border-green-500 p-6">
           <h2 className="text-xl font-bold mb-6">Control Panel</h2>
           <div className="space-y-4 mb-8">
             {Object.keys(toggleLabels).map((key) => (
-              <label key={key} className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${toggles[key] ? 'border-green-500 bg-green-50/30' : 'border-gray-200'}`}>
-                <span className="font-semibold text-gray-700">{toggleLabels[key]}</span>
+              <label key={key} className={`flex items-center justify-between p-3 border rounded-lg cursor-point transition-colors hover:bg-gray-50 ${toggles[key] ? 'border-green-500 bg-green-50/30' : 'border-gray-800'}`}>
+                <span className="font-semibold text-black">{toggleLabels[key]}</span>
                 <input 
                   type="checkbox" 
                   checked={toggles[key]} 
@@ -89,7 +88,7 @@ const EcoLab = () => {
             ))}
           </div>
           
-          <div className="bg-gray-900 rounded-xl p-6 text-white text-center shadow-inner">
+          <div className="bg-gray-900 rounded-xl p-6 text-center shadow-inner">
             <p className="text-gray-400 text-sm uppercase tracking-wide font-semibold mb-1">Current Emission</p>
             <p className="text-5xl font-black text-green-400">
               {currentEmission.toFixed(1)} <span className="text-2xl font-medium text-gray-500">g</span>

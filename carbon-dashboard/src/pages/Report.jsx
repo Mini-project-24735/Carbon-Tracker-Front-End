@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BarChart3, Download, Globe, Cpu, Video, MonitorPlay, Calendar } from 'lucide-react';
+import { BarChart3, Calendar, Cpu, Download, Globe, MonitorPlay, Video } from 'lucide-react';
+import { useState } from 'react';
 
 const Report = () => {
   const [timeframe, setTimeframe] = useState('This Week');
@@ -83,7 +83,7 @@ const Report = () => {
             <option value="This Week">This Week</option>
             <option value="This Month">This Month</option>
           </select>
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors cursor-pointer">
+          <button className="flex items-center gap-2 bg-green-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors cursor-pointer">
             <Download size={18} /> Export PDF
           </button>
         </div>
@@ -106,22 +106,22 @@ const Report = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Globe className="text-gray-400" /> Top Emitting Domains
+        <div className="bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-400">
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <Globe className="text-gray-300" /> Top Emitting Domains
           </h3>
           <div className="space-y-5">
             {currentData.topSites.map((site, index) => (
               <div key={index}>
                 <div className="flex justify-between items-center mb-1">
-                  <div className="flex items-center gap-2 font-medium text-gray-800">
+                  <div className="flex items-center gap-2 font-medium text-gray-300">
                     {site.icon} {site.domain}
                   </div>
-                  <div className="font-bold text-gray-900">{site.carbon} g</div>
+                  <div className="font-bold text-gray-200">{site.carbon} g</div>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-2.5">
                   <div 
-                    className="bg-blue-500 h-2.5 rounded-full" 
+                    className="bg-green-500 h-2.5 rounded-full" 
                     style={{ width: `${(site.carbon / currentData.topSites[0].carbon) * 100}%` }}
                   ></div>
                 </div>
@@ -130,12 +130,12 @@ const Report = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Calendar className="text-gray-400" /> Trend Analysis
+        <div className="bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-400 flex flex-col">
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <Calendar className="text-gray-300" /> Trend Analysis
           </h3>
           
-          <div className="flex-1 flex items-end justify-between gap-2 mt-4 pt-4 border-t border-gray-100">
+          <div className="flex-1 flex items-end justify-between gap-2 mt-4 pt-4 border-t border-gray-700">
             {currentData.weeklyTrend.map((day, index) => (
               <div key={index} className="flex flex-col items-center flex-1 group">
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold text-gray-600 mb-2">
@@ -143,7 +143,7 @@ const Report = () => {
                 </span>
                 
                 <div 
-                  className="w-full max-w-[40px] bg-blue-100 hover:bg-blue-500 transition-colors rounded-t-md cursor-pointer"
+                  className="w-full max-w-[40px] bg-green-400 hover:bg-blue-500 transition-colors rounded-t-md cursor-pointer"
                   style={{ height: `${(day.value / maxTrendValue) * 200}px` }}
                 ></div>
                 

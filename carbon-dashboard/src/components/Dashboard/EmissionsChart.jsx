@@ -1,5 +1,4 @@
-import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const weeklyData = [
   { day: 'Mon', emissions: 45 }, { day: 'Tue', emissions: 52 },
@@ -23,7 +22,7 @@ const EmissionsChart = () => {
           <YAxis stroke="#9ca3af" />
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
           <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
-          <Area type="monotone" dataKey="emissions" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorEmissions)" />
+          <Area type="monotone" dataKey="emissions" stroke="#10b981"  strokeWidth={3} fillOpacity={1} fill="url(#colorEmissions)" />
         </AreaChart>
       </ResponsiveContainer>
     </div>
