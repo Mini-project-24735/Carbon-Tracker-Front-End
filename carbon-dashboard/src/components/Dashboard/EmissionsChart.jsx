@@ -9,7 +9,7 @@ const weeklyData = [
 
 const EmissionsChart = () => {
   return (
-    <div className="bg-transparent h-72 w-full mt-4">
+    <div className="bg-black h-72 w-full mt-4">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>

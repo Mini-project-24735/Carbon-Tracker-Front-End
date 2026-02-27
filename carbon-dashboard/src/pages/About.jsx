@@ -6,7 +6,7 @@ const About=()=>{
         jp,bg,logo
     ];
     return(
-        <div className="max-w-5xl mx-auto px-4 py-12 text-green-500 font-sans">
+        <div className="max-w-5xl mx-auto px-4 py-12 text-green-500 font-sans bg-black">
             {/* Hero Section */}
             <header className="text-center mb-16">
                 <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
@@ -29,7 +29,7 @@ const About=()=>{
             </section>
 
             {/* Features/Empowerment Section */}
-            <section className="bg-gradient-to-br from-green-500 to-emerald-70 border border-none  text-white rounded-2xl p-8 md:p-12 mb-20">
+            <section className="bg-black border border-green-500  text-green-500 rounded-2xl p-8 md:p-12 mb-20">
                 <h2 className="text-center text-3xl font-bold mb-10">Empowering Sustainable Browsing</h2>
                 <ul className="space-y-8 max-w-4xl mx-auto">
                     <li className="flex gap-4">

@@ -1,9 +1,9 @@
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import bgImage from './bg3.png';
+import bgImage from './bg4.jpg';
 
-const Login = ({ setIsLoggedIn }) => {
+const Login = ({ setIsLoggedIn, switchToSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -32,10 +32,9 @@ const Login = ({ setIsLoggedIn }) => {
   };
 
   return (
-    <div className="flex-1 w-full flex bg-cover bg-center items-center justify-center px-4"
-  style={{ backgroundImage: `url(${bgImage})` }}
+    <div className="flex-1 w-full flex bg-zinc-950 bg-cover bg-center items-center justify-center px-4"
 >
-      <div className="w-full max-w-md rounded-3xl bg-black p-8 shadow-lg">
+      <div className="w-full max-w-md rounded-3xl bg-zinc-950 p-8">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
           <p className="text-sm text-gray-400 mt-2">Please sign in to your account</p>
@@ -100,12 +99,13 @@ const Login = ({ setIsLoggedIn }) => {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-400">
             Don't have an account?{' '}
-            <Link
-            to="/signup"
-            className="font-semibold text-green-500 hover:text-green-400"
-            >
+            <button
+            type="button"
+            onClick={switchToSignup}
+            className="font-semibold text-green-500 hover:text-green-400 focus:outline-none"
+          >
             Sign up
-          </Link>
+          </button>
           </p>
         </div>
       </div>

@@ -1,100 +1,241 @@
-import { Image as ImageIcon, Leaf, Search, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Leaf, MonitorPlay, Cpu, Cloud, Car, TreePine, Zap, Lightbulb } from 'lucide-react';
 
 const EcoLab = () => {
-  // Added darkMode and limitAI to the state
-  const [toggles, setToggles] = useState({ 
-    stopAutoplay: false, 
-    blurImages: false, 
-    grayscale: false,
-    darkMode: false,
-    limitAI: false 
-  });
-  
-  // Bumped base emissions up because we are simulating heavy AI and video use!
-  const baseEmission = 45.0;
+  // --- SIMULATOR STATE ---
+  const [videoHours, setVideoHours] = useState(2);
+  const [videoQuality, setVideoQuality] = useState('HD'); // SD, HD, 4K
+  const [aiPrompts, setAiPrompts] = useState(10);
+  const [cloudStorage, setCloudStorage] = useState(50); // in GB
 
-  const calculateSavings = () => {
-    let savings = 0;
-    if (toggles.limitAI) savings += 0.40;      // AI is heavy! Huge savings for turning it off.
-    if (toggles.stopAutoplay) savings += 0.25;
-    if (toggles.blurImages) savings += 0.15;
-    if (toggles.darkMode) savings += 0.10;     // OLED dark mode saves power.
-    if (toggles.grayscale) savings += 0.05;
-    return savings;
+  // --- LIVE RESULTS STATE ---
+  const [dailyCarbon, setDailyCarbon] = useState(0);
+  const [yearlyCarbon, setYearlyCarbon] = useState(0);
+  const [suggestions, setSuggestions] = useState([]);
+
+  // --- THE MATH (Estimations in grams of CO2) ---
+  const emissionsRates = {
+    video: { 'SD': 36, 'HD': 55, '4K': 100 }, // g per hour
+    ai: 4.3, // g per prompt
+    cloud: 0.002 // g per GB per day
   };
 
-  const currentEmission = baseEmission * (1 - calculateSavings());
+  // Recalculate whenever a slider changes
+  useEffect(() => {
+    // 1. Calculate Carbon
+    const videoEmissions = videoHours * emissionsRates.video[videoQuality];
+    const aiEmissions = aiPrompts * emissionsRates.ai;
+    const cloudEmissions = cloudStorage * emissionsRates.cloud;
 
-  const handleToggle = (key) => setToggles((prev) => ({ ...prev, [key]: !prev[key] }));
+    const totalDaily = videoEmissions + aiEmissions + cloudEmissions;
+    setDailyCarbon(totalDaily);
+    setYearlyCarbon(totalDaily * 365);
 
-  const toggleLabels = {
-    limitAI: 'Limit AI Usage',
-    stopAutoplay: 'Stop Autoplay',
-    blurImages: 'Blur Media',
-    darkMode: 'Dark Mode',
-    grayscale: 'Grayscale Mode'
-  };
+    // 2. Generate Dynamic Suggestions
+    const newSuggestions = [];
+
+    if (videoQuality === '4K') {
+      newSuggestions.push("Dropping your video quality from 4K to HD cuts those specific emissions by almost half. You likely won't notice the difference on a laptop screen!");
+    }
+    
+    if (videoHours > 4) {
+      newSuggestions.push("You have high daily watch time. Consider switching to audio-only (like podcasts or Spotify) for background noise instead of leaving videos running.");
+    }
+
+    if (aiPrompts > 30) {
+      newSuggestions.push("AI generation is highly energy-intensive. Try batching your questions into fewer, more comprehensive prompts to reduce server load.");
+    }
+
+    if (cloudStorage > 500) {
+      newSuggestions.push("Large cloud storage requires continuous server cooling. Doing a 'digital spring cleaning' to delete duplicate photos and old backups can lower this permanently.");
+    }
+
+    // If they are doing great, give positive reinforcement!
+    if (newSuggestions.length === 0) {
+      newSuggestions.push("Great job! Your current simulated habits represent a very sustainable digital footprint.");
+    }
+
+    setSuggestions(newSuggestions);
+
+  }, [videoHours, videoQuality, aiPrompts, cloudStorage]);
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-8">
-        <Leaf className="text-green-500" /> Eco-Simulator
-      </h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full text-white">
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* LEFT COLUMN: The Visual Sandbox */}
-        <div className={`border-2 border-dashed border-green-500 rounded-xl p-4 transition-all bg-gradient-to-br from-green-500 to-emerald-800 ${toggles.grayscale ? 'grayscale' : ''}`}>
+      {/* HEADER */}
+      <div className="mb-10 text-center md:text-left">
+        <h1 className="text-4xl font-black mb-3 flex items-center justify-center md:justify-start gap-3">
+           The Eco-Simulator
+        </h1>
+        <p className="text-xl text-gray-400 max-w-2xl">
+          Tweak your daily digital habits below to see how small changes drastically impact your carbon footprint over time.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        {/* --- LEFT COLUMN: THE CONTROLS --- */}
+        <div className="lg:col-span-7 space-y-8">
           
-          {/* Inner Sandbox Container - Responds to Dark Mode */}
-          <div className={`rounded-lg p-6 h-[420px] transition-colors duration-300 ${toggles.darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
-            <h2 className="text-2xl font-black mb-4">Tech News</h2>
-            
-            {/* NEW: AI Usage vs Standard Search Component */}
-            <div className={`w-full p-3 rounded-lg mb-4 flex items-center justify-center gap-2 transition-all duration-500 ${toggles.limitAI ? (toggles.darkMode ? 'bg-gray-800 text-gray-400 border border-gray-700' : 'bg-gray-200 text-gray-600') : 'bg-gradient-to-r from-purple-600 to-blue-500 text-white shadow-lg shadow-purple-500/30'}`}>
-              {toggles.limitAI ? (
-                <><Search size={18} /> <span>Standard Web Search</span></>
-              ) : (
-                <><Sparkles size={18} /> <span className="font-bold"> Generating AI Video...</span></>
-              )}
-            </div>
-
-            {/* Video Component */}
-            <div className={`w-full h-32 rounded-lg flex items-center justify-center mb-4 text-white transition-colors ${toggles.darkMode ? 'bg-black' : 'bg-gray-800'}`}>
-              {toggles.stopAutoplay ? "⏸ Video Paused" : "▶ Playing 4K Video"}
+          {/* Control 1: Video Streaming */}
+          <div className="bg-black border border-zinc-800 p-6 rounded-3xl shadow-lg transition-colors hover:border-zinc-700">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 bg-red-500/20 rounded-xl text-red-500"><MonitorPlay size={24} /></div>
+              <h2 className="text-2xl font-bold">Video Streaming</h2>
             </div>
             
-            {/* Image Component */}
-            <div className={`h-24 rounded-lg flex items-center justify-center transition-all ${toggles.darkMode ? 'bg-blue-900/50 text-blue-400' : 'bg-blue-200 text-blue-800'} ${toggles.blurImages ? 'blur-md' : ''}`}>
-              <ImageIcon size={32} />
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN: The Control Panel */}
-        <div className="bg-gradient-to-br from-green-500 to-emerald-800 rounded-xl shadow-sm border border-green-500 p-6">
-          <h2 className="text-xl font-bold mb-6">Control Panel</h2>
-          <div className="space-y-4 mb-8">
-            {Object.keys(toggleLabels).map((key) => (
-              <label key={key} className={`flex items-center justify-between p-3 border rounded-lg cursor-point transition-colors hover:bg-gray-50 ${toggles[key] ? 'border-green-500 bg-green-50/30' : 'border-gray-800'}`}>
-                <span className="font-semibold text-black">{toggleLabels[key]}</span>
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between text-sm mb-2 font-medium">
+                  <label className="text-gray-400">Daily Watch Time</label>
+                  <span className="text-green-400">{videoHours} Hours</span>
+                </div>
                 <input 
-                  type="checkbox" 
-                  checked={toggles[key]} 
-                  onChange={() => handleToggle(key)} 
-                  className="w-5 h-5 accent-green-500" 
+                  type="range" min="0" max="12" step="0.5" 
+                  value={videoHours} onChange={(e) => setVideoHours(Number(e.target.value))}
+                  className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer 
+                    [&::-webkit-slider-thumb]:appearance-none 
+                    [&::-webkit-slider-thumb]:w-3 
+                    [&::-webkit-slider-thumb]:h-3 
+                    [&::-webkit-slider-thumb]:bg-white 
+                    [&::-webkit-slider-thumb]:rounded-full"
                 />
-              </label>
-            ))}
+              </div>
+
+              <div>
+                <label className="text-gray-400 text-sm font-medium mb-3 block">Video Quality</label>
+                <div className="flex gap-3">
+                  {['SD', 'HD', '4K'].map(quality => (
+                    <button
+                      key={quality}
+                      onClick={() => setVideoQuality(quality)}
+                      className={`flex-1 py-3 rounded-xl font-bold transition-all ${
+                        videoQuality === quality 
+                          ? 'bg-green-500 text-black border-2 border-green-500' 
+                          : 'bg-zinc-900 text-gray-400 border-2 border-zinc-800 hover:border-zinc-600'
+                      }`}
+                    >
+                      {quality}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div className="bg-gray-900 rounded-xl p-6 text-center shadow-inner">
-            <p className="text-gray-400 text-sm uppercase tracking-wide font-semibold mb-1">Current Emission</p>
-            <p className="text-5xl font-black text-green-400">
-              {currentEmission.toFixed(1)} <span className="text-2xl font-medium text-gray-500">g</span>
-            </p>
+
+          {/* Control 2: AI Usage */}
+          <div className="bg-black border border-zinc-800 p-6 rounded-3xl shadow-lg transition-colors hover:border-zinc-700">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 bg-purple-500/20 rounded-xl text-purple-500"><Cpu size={24} /></div>
+              <h2 className="text-2xl font-bold">AI Generation</h2>
+            </div>
+            
+            <div>
+              <div className="flex justify-between text-sm mb-2 font-medium">
+                <label className="text-gray-400">Daily Prompts (ChatGPT, Midjourney, etc.)</label>
+                <span className="text-purple-400">{aiPrompts} Prompts</span>
+              </div>
+              <input 
+                type="range" min="0" max="100" step="1" 
+                value={aiPrompts} onChange={(e) => setAiPrompts(Number(e.target.value))}
+                className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer 
+                    [&::-webkit-slider-thumb]:appearance-none 
+                    [&::-webkit-slider-thumb]:w-3 
+                    [&::-webkit-slider-thumb]:h-3 
+                    [&::-webkit-slider-thumb]:bg-white 
+                    [&::-webkit-slider-thumb]:rounded-full"
+              />
+              <p className="text-xs text-gray-600 mt-2">AI models require immense computational power per query.</p>
+            </div>
+          </div>
+
+          {/* Control 3: Cloud Storage */}
+          <div className="bg-black border border-zinc-800 p-6 rounded-3xl shadow-lg transition-colors hover:border-zinc-700">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 bg-blue-500/20 rounded-xl text-blue-500"><Cloud size={24} /></div>
+              <h2 className="text-2xl font-bold">Cloud Storage</h2>
+            </div>
+            
+            <div>
+              <div className="flex justify-between text-sm mb-2 font-medium">
+                <label className="text-gray-400">Data stored in Drive/Photos/iCloud</label>
+                <span className="text-blue-400">{cloudStorage} GB</span>
+              </div>
+              <input 
+                type="range" min="0" max="2000" step="50" 
+                value={cloudStorage} onChange={(e) => setCloudStorage(Number(e.target.value))}
+                className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer 
+                    [&::-webkit-slider-thumb]:appearance-none 
+                    [&::-webkit-slider-thumb]:w-3 
+                    [&::-webkit-slider-thumb]:h-3 
+                    [&::-webkit-slider-thumb]:bg-white 
+                    [&::-webkit-slider-thumb]:rounded-full"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        {/* --- RIGHT COLUMN: THE LIVE RESULTS --- */}
+        <div className="lg:col-span-5">
+          <div className="sticky top-32 space-y-6">
+            
+            {/* Main Result Card */}
+            <div className="bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl pointer-events-none"></div>
+              
+              <h3 className="text-gray-400 font-semibold mb-2 uppercase tracking-wider text-sm relative z-10">Your Simulated Footprint</h3>
+              
+              <div className="mb-8 relative z-10">
+                <div className="flex items-end gap-2">
+                  <span className="text-6xl font-black text-white">{Math.round(yearlyCarbon / 1000)}</span>
+                  <span className="text-xl text-gray-500 font-medium mb-2">kg CO₂ / year</span>
+                </div>
+                <p className="text-green-500 font-medium mt-2 flex items-center gap-2">
+                  <Leaf size={16} /> That's {Math.round(dailyCarbon)} grams per day
+                </p>
+              </div>
+
+              {/* Real World Equivalents */}
+              <div className="space-y-4 relative z-10 border-t border-zinc-800 pt-6">
+                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Real World Equivalent</h4>
+                
+                <div className="flex items-center gap-4 bg-black/50 p-4 rounded-2xl border border-zinc-800/50">
+                  <div className="p-3 bg-zinc-900 rounded-xl"><Car className="text-gray-300" /></div>
+                  <div>
+                    <p className="font-bold text-white">{Math.round((yearlyCarbon / 1000) / 0.12)} km</p>
+                    <p className="text-sm text-gray-400">Driven in a gas car</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 bg-black/50 p-4 rounded-2xl border border-zinc-800/50">
+                  <div className="p-3 bg-zinc-900 rounded-xl"><TreePine className="text-green-500" /></div>
+                  <div>
+                    <p className="font-bold text-white">{Math.max(1, Math.round((yearlyCarbon / 1000) / 21))} trees</p>
+                    <p className="text-sm text-gray-400">Needed to absorb this yearly</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* --- DYNAMIC ACTIONABLE INSIGHTS --- */}
+            <div className="bg-zinc-950/80 border border-zinc-800 p-6 rounded-3xl">
+              <h4 className="font-bold text-white mb-4 flex items-center gap-2 text-lg">
+                <Lightbulb className="text-yellow-500" size={20} /> Actionable Insights
+              </h4>
+              <ul className="space-y-4">
+                {suggestions.map((tip, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <span className="text-green-500 mt-1">✓</span>
+                    <p className="text-gray-300 text-sm leading-relaxed">{tip}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
           </div>
         </div>
+
       </div>
     </div>
   );

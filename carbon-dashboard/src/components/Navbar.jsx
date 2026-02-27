@@ -1,34 +1,51 @@
-import { LogOut } from 'lucide-react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Logo from "./Dashboard/logo.png";
+import { Leaf,LogOut } from 'lucide-react';
 
-const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
+const Navbar = ({ isLoggedIn, setIsLoggedIn, openLogin, openSignup }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('carbonUser');
     setIsLoggedIn(false);
-    navigate('/login');
+    navigate('/');
   };
 
   return (
+    <nav className="relative z-50 flex justify-between items-center p-6 w-full max-w-7xl mx-auto ">
+      
+      {/* LOGO */}
+      <Link to="/" className="flex items-center gap-2">
+        <Leaf className="text-green-500 w-8 h-8" />
+        <span className="text-2xl font-black tracking-tight text-white">CarbonTracker</span>
+      </Link>
 
-    <nav className={isLoggedIn ? "bg-gray-950 text-white p-4 shadow-lg" : "bg-transparent text-white p-4 absolute w-full z-10"}>
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2 ">
-          <img src={Logo} alt="" className='h-20 rounded-3xl' />
-        </Link>
-
-        {isLoggedIn && (
-          <div className="flex items-center gap-6">
-            <Link to="/" className="hover:text-green-400 transition">Home</Link>
-            <Link to="/eco-lab" className="hover:text-green-400 transition">Eco-Simulator</Link>
+      <div className="flex items-center gap-8 font-semibold text-sm uppercase tracking-wider text-gray-300">
+        
+        {/* --- SCENARIO 1: LOGGED OUT NAVBAR --- */}
+        {!isLoggedIn && (
+          <>
             <Link to="/about" className="hover:text-green-400 transition-colors">About</Link>
-            <button onClick={handleLogout} className="flex items-center gap-1 text-gray-400 hover:text-red-400 transition border-l border-gray-700 pl-4 ml-2">
-              <LogOut size={18} /> Logout
+            <button onClick={openLogin} className="hover:text-green-400 transition-colors">Login</button>
+            <button 
+              onClick={openSignup} 
+              className="bg-green-500 hover:bg-green-400 text-black px-6 py-2 rounded-full transition-all transform hover:scale-105"
+            >
+              Sign Up
             </button>
-          </div>
+          </>
         )}
+
+        {/* --- SCENARIO 2: LOGGED IN NAVBAR --- */}
+        {isLoggedIn && (
+          <>
+            <Link to="/" className="hover:text-green-400 transition-colors">Home</Link>
+            <Link to="/about" className="hover:text-green-400 transition-colors">About</Link>
+            <Link to="/eco-lab" className="hover:text-green-400 transition-colors">Eco-Simulator</Link>
+            <button onClick={handleLogout} className="flex item-center gap-2 text-red-400 hover:text-red-300 transition-colors"><LogOut size={18}/>Log Out</button>
+          </>
+        )}
+
       </div>
     </nav>
   );
